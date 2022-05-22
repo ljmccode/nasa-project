@@ -18,8 +18,10 @@ const launch = {
 
 saveLaunch(launch);
 
-function existsLaunchWithId(launchId) {
-  return launches.has(launchId);
+async function existsLaunchWithId(launchId) {
+  return await launchesDatabase.findOne({
+    flightNumber: launchId
+  });
 }
 
 async function getLatestFlightNumber() {
