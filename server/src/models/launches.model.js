@@ -20,28 +20,29 @@ const launch = {
 
 saveLaunch(launch);
 
-const SPACEX_API_URL = "https://api.spacexdata.com/v4/launches/query"
+const SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query';
 
 async function loadLaunchesData() {
   console.log('Downloading launch data');
   const response = await axios.post(SPACEX_API_URL, {
-      query: {},
-      options: {
-          populate: [
-              {
-                  path: 'rocket',
-                  select: {
-                      name: 1
-                  }
-              },
-              {
-                path: 'payloads',
-                select: {
-                    customers: 1
-                }
-            }
-          ]
-      }
+    query: {},
+    options: {
+      pagination: false,
+      populate: [
+        {
+          path: 'rocket',
+          select: {
+            name: 1,
+          },
+        },
+        {
+          path: 'payloads',
+          select: {
+            customers: 1,
+          },
+        },
+      ],
+    },
   });
 
   const launchDocs = response.data.docs;
@@ -58,16 +59,20 @@ async function loadLaunchesData() {
       launchDate: launchDoc['date_local'],
       upcoming: launchDoc['upcoming'],
       success: launchDoc['success'],
-      customers
+      customers,
     };
 
-    console.log(`${launch.mission}`)
+    console.log(`${launch.mission}`);
   }
+}
+
+async function findLaunch(filter) {
+  return await launchesDatabase.findOne(filter);
 }
 
 async function existsLaunchWithId(launchId) {
   return await launchesDatabase.findOne({
-    flightNumber: launchId
+    flightNumber: launchId,
   });
 }
 
@@ -82,10 +87,13 @@ async function getLatestFlightNumber() {
 }
 
 async function getAllLaunches() {
-  return await launchesDatabase
-    .find({}, {
-      _id: 0, __v: 0,
-  });
+  return await launchesDatabase.find(
+    {},
+    {
+      _id: 0,
+      __v: 0,
+    }
+  );
 }
 
 async function saveLaunch(launch) {
@@ -109,25 +117,28 @@ async function saveLaunch(launch) {
 }
 
 async function scheduleNewLaunch(launch) {
-  const newFlightNumber = await getLatestFlightNumber() + 1;
+  const newFlightNumber = (await getLatestFlightNumber()) + 1;
 
   const newLaunch = Object.assign(launch, {
     success: true,
     upcoming: true,
     customers: ['ZTM, NASA'],
-    flightNumber: newFlightNumber
+    flightNumber: newFlightNumber,
   });
 
   await saveLaunch(newLaunch);
 }
 
 async function abortLaunchById(launchId) {
-  const aborted = await launchesDatabase.updateOne({
-    flightNumber: launchId
-  }, {
-    upcoming: false,
-    success: false
-  })
+  const aborted = await launchesDatabase.updateOne(
+    {
+      flightNumber: launchId,
+    },
+    {
+      upcoming: false,
+      success: false,
+    }
+  );
 
   return aborted.modifiedCount === 1;
 }
