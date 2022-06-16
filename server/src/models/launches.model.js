@@ -52,22 +52,7 @@ async function populateLaunches() {
       customers,
     };
 
-    console.log(`${launch.flightNumber} ${launch.mission}`);
-
     await saveLaunch(launch);
-  }
-}
-
-async function loadLaunchesData() {
-  const firstLaunch = await findLaunch({
-    flightNumber: 1,
-    rocket: 'Falcon 1',
-    mission: 'FalconSat',
-  });
-  if (firstLaunch) {
-    console.log('Launch data already loaded');
-  } else {
-    await populateLaunches();
   }
 }
 
@@ -146,7 +131,7 @@ async function abortLaunchById(launchId) {
 }
 
 module.exports = {
-  loadLaunchesData,
+  populateLaunches,
   existsLaunchWithId,
   getAllLaunches,
   scheduleNewLaunch,
