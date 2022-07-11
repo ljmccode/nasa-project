@@ -2,7 +2,7 @@
 
 Welcome to Nasa Mission Control! Schedule a mission launch for interstellar travel to one of the Kepler Exoplanets fit for human life. View upcoming and historic launches that both you and SpaceX have scheduled.
 
-<img src="./client/public/img/README-image.png" alt="nasa-project" width="800">
+<img src="./home-screen.png" alt="nasa-project" width="800">
 
 ## Getting Started
 
